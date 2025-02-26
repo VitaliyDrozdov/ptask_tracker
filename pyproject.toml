@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "pomodoro-project"
+version = "0.1.0"
+description = ""
+authors = ["VitaliyDrozdov <vitdrzdv@mail.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pre-commit = "^4.1.0"
+python-dotenv = "^1.0.1"
+fastapi = {extras = ["standard"], version = "^0.115.8"}
+
+
+[tool.poetry.group.dev.dependencies]
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
