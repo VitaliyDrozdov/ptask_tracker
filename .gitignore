@@ -6,7 +6,7 @@
 .csv
 .db_tables.py
 
-.env
+*.env
 
 .db
 
