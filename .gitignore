@@ -6,11 +6,12 @@
 .csv
 .db_tables.py
 
-*.env
+*.env*
 
 .db
 
 # userfiles
+*sb.py
 
 data/
 .mypy_cache/
