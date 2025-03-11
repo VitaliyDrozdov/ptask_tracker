@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from handlers import routers
+from src.handlers import routers
 
 app = FastAPI()
 app.mount("/api", app)

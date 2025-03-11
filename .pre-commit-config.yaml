@@ -31,8 +31,9 @@ repos:
   hooks:
     - id: flake8
       args:
-      - --exclude
-      - "migrations*"
+        - --exclude
+        - "**/__init__.py"
+        - "migrations"
 
 
 

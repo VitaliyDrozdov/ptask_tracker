@@ -37,7 +37,7 @@ class DBConfig:
     if settings.app_env == "dev":
         DATABASE_URL = settings.database_url
         engine = create_async_engine(DATABASE_URL, echo=True)
-        async_sessionmaker = async_sessionmaker(
+        async_sessionmaker_ = async_sessionmaker(
             bind=engine, expire_on_commit=False, class_=AsyncSession
         )
     else:
