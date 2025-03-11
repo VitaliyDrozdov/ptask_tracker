@@ -14,7 +14,7 @@ repos:
       args:
       - --line-length=79
       - --exclude
-      - "migrations/.*"
+      - "migrations*/.*"
 
 
 
@@ -24,7 +24,7 @@ repos:
     - id: isort
       args:
       - --skip
-      - "migrations/.*"
+      - "migrations*/.*"
 
 - repo: https://github.com/PyCQA/flake8
   rev: 7.1.2
@@ -32,7 +32,7 @@ repos:
     - id: flake8
       args:
       - --exclude
-      - "migrations"
+      - "migrations*"
 
 
 

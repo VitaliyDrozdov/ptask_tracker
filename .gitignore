@@ -13,6 +13,7 @@
 # userfiles
 *sb.py
 
+
 data/
 .mypy_cache/
 __pycache__/
