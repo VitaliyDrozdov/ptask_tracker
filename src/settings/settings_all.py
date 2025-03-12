@@ -23,6 +23,9 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=f".env.{os.getenv('APP_ENV', 'dev')}", case_sensitive=False
     )
+    CACHE_HOST: str = "0.0.0.0"
+    CACHE_PORT: int = 6379
+    CACHE_DB: int = 0
 
 
 @lru_cache

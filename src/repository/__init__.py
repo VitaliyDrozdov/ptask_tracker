@@ -1,3 +1,4 @@
-from src.repository.task import TaskRepository, get_tasks_repository
+from src.repository.cache import TaskCache
+from src.repository.task import TaskRepository
 
-__all__ = ["TaskRepository"]
+__all__ = ["TaskRepository", "TaskCache"]
