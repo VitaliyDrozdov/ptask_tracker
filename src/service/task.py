@@ -1,13 +1,13 @@
 from dataclasses import dataclass
 
-from src.repository import TaskCache, TaskRepository
+from src.repository import TaskCacheRepository, TaskRepository
 from src.schemas import TaskCreate, TaskResponse
 
 
 @dataclass
 class TaskService:
     task_repository: TaskRepository
-    task_cache: TaskCache
+    task_cache: TaskCacheRepository
 
     async def get_tasks(self) -> list[TaskResponse]:
         if cache := await self.task_cache.get_tasks():
