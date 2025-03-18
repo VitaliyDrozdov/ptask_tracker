@@ -25,7 +25,7 @@ class CategoryRepository:
         self.db_session.add(category)
         await self.db_session.flush()
         await self.db_session.commit()
-        return category.id
+        return category
 
     async def delete_category(self, category_id: int):
         res = await self.db_session.execute(
@@ -48,4 +48,4 @@ class CategoryRepository:
         if not category:
             return None
         await self.db_session.commit()
-        return category.name, category.type
+        return category

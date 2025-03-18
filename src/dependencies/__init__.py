@@ -1,12 +1,14 @@
 from typing import Annotated
 
+# isort: skip file
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from dependencies.cache import get_cache_session
 from dependencies.db import get_db_session  # noqa
-from src.repository import TaskCacheRepository, TaskRepository
-from src.service import TaskService
+from src.repository import TaskCacheRepository  # noqa
+from src.repository import CategoryRepository, TaskRepository  # noqa
+from src.service import CategoryService, TaskService
 
 
 async def get_task_repository(
@@ -27,3 +29,17 @@ async def get_task_service(
     ],
 ) -> TaskService:
     return TaskService(task_repository, task_cache)
+
+
+async def get_category_repository(
+    db_session: Annotated[AsyncSession, Depends(get_db_session)],
+):
+    return CategoryRepository(db_session)
+
+
+async def get_category_service(
+    category_repository: Annotated[
+        CategoryRepository, Depends(get_category_repository)
+    ],
+):
+    return CategoryService(category_repository)
