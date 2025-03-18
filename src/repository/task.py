@@ -1,10 +1,8 @@
 from typing import List, Optional
 
-from fastapi import Depends
 from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.dependencies import get_db_session
 from src.models import Categories, Tasks
 from src.schemas import TaskCreate
 
@@ -25,8 +23,8 @@ class TaskRepository:
             res = await self.db_session.execute(
                 select(Tasks).where(Tasks.categories.in_(category_ids))
             )
-        task = res.scalars().first()
-        return task
+        tasks = res.scalars().all()
+        return tasks
 
     async def create_task(self, task_create: TaskCreate):
         category_ids = (
@@ -52,8 +50,13 @@ class TaskRepository:
 
     async def delete_task(self, task_id: int):
         async with self.db_session as session:
-            await session.execute(delete(Tasks).where(Tasks.id == task_id))
+            res = await session.execute(
+                delete(Tasks).where(Tasks.id == task_id)
+            )
+            if res.rowcount == 0:
+                return False
             await session.commit()
+            return True
 
     async def update_task_name(self, task_id: int, name: str) -> Tasks:
         query = (
@@ -68,7 +71,3 @@ class TaskRepository:
         await self.db_session.commit()
         await self.db_session.flush()
         return await self.get_task(task_id)
-
-
-def get_tasks_repository(db_session: AsyncSession = Depends(get_db_session)):
-    return TaskRepository(db_session)
