@@ -32,8 +32,8 @@ repos:
     - id: flake8
       args:
         - --exclude
-        - "**/__init__.py"
-        - "migrations"
+        - "migrations*/*, *__init__.py"
+
 
 
 
@@ -42,7 +42,8 @@ repos:
 #   rev: v1.15.0
 #   hooks:
 #     - id: mypy
-#       args: ["--exclude", "__init__.py"]
+#       # args: ["--exclude", "__init__.py"]
+#       exclude: '.*init*'
 
 
 

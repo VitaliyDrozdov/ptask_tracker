@@ -4,8 +4,8 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from dependencies.cache import get_cache_session
-from dependencies.db import get_db_session  # noqa
+from src.dependencies.cache import get_cache_session
+from src.dependencies.db import get_db_session  # noqa
 from src.repository import TaskCacheRepository  # noqa
 from src.repository import CategoryRepository, TaskRepository  # noqa
 from src.service import CategoryService, TaskService

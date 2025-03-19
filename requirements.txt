@@ -41,6 +41,7 @@ python-dateutil==2.9.0.post0 ; python_version >= "3.11" and python_version < "4.
 python-dotenv==1.0.1 ; python_version >= "3.11" and python_version < "4.0"
 python-multipart==0.0.20 ; python_version >= "3.11" and python_version < "4.0"
 pyyaml==6.0.2 ; python_version >= "3.11" and python_version < "4.0"
+redis-cli==1.0.1 ; python_version >= "3.11" and python_version < "4.0"
 redis==5.2.1 ; python_version >= "3.11" and python_version < "4.0"
 rich-toolkit==0.13.2 ; python_version >= "3.11" and python_version < "4.0"
 rich==13.9.4 ; python_version >= "3.11" and python_version < "4.0"

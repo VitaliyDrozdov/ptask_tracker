@@ -2,7 +2,7 @@ from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models import Categories
-from src.schemas import CategoryCreateResponse
+from src.schemas import CategoryCreate
 
 
 class CategoryRepository:
@@ -14,11 +14,11 @@ class CategoryRepository:
         return await self.db_session.execute(query).scalar()
 
     async def get_all_categories(self):
-        return (
-            await self.db_session.execute(select(Categories)).scalars().all()
-        )
+        categories = await self.db_session.execute(select(Categories))
+        categories = categories.scalars().all()
+        return categories
 
-    async def create_category(self, category_create: CategoryCreateResponse):
+    async def create_category(self, category_create: CategoryCreate):
         category = Categories(
             name=category_create.name, type=category_create.type
         )
@@ -37,14 +37,15 @@ class CategoryRepository:
         return True
 
     async def update_category(
-        self, category_id: int, category_update: CategoryCreateResponse
+        self, category_id: int, category_update: CategoryCreate
     ):
         category = await self.db_session.execute(
             update(Categories)
             .where(Categories.id == category_id)
-            .value(name=category_update.name, type=category_update.type)
+            .values(name=category_update.name, type=category_update.type)
             .returning(Categories)
-        ).scalar()
+        )
+        category = category.scalar_one_or_none()
         if not category:
             return None
         await self.db_session.commit()

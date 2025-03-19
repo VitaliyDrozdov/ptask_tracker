@@ -19,7 +19,7 @@ class Tasks(Base):
     # category_id: Mapped[int] = mapped_column(
     #     Integer, ForeignKey("categories.id"), nullable=False
     # )
-    categories: Mapped["Categories"] = relationship(
+    categories: Mapped[list["Categories"]] = relationship(
         "Categories", back_populates="tasks", secondary=tasks_categories
     )
 

@@ -3,12 +3,12 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.dependencies import CategoryService, get_category_service
-from src.schemas import CategoryCreateResponse
+from src.schemas import CategoryCreate, CategoryResponse
 
 router = APIRouter(prefix="/categories", tags=["Categories"])
 
 
-@router.get("/", response_model=list[CategoryCreateResponse])
+@router.get("/", response_model=list[CategoryResponse])
 async def get_all_categories(
     category_service: Annotated[
         CategoryService, Depends(get_category_service)
@@ -19,24 +19,24 @@ async def get_all_categories(
 
 @router.post(
     "/",
-    response_model=CategoryCreateResponse,
+    response_model=CategoryResponse,
     status_code=status.HTTP_201_CREATED,
 )
 async def create_category(
     category_service: Annotated[
         CategoryService, Depends(get_category_service)
     ],
-    body: CategoryCreateResponse,
+    body: CategoryCreate,
 ):
     return await category_service.create_category(body)
 
 
-@router.put("/{category_id}", response_model=CategoryCreateResponse)
+@router.put("/{category_id}", response_model=CategoryResponse)
 async def update_cateogory(
     category_service: Annotated[
         CategoryService, Depends(get_category_service)
     ],
-    body: CategoryCreateResponse,
+    body: CategoryCreate,
     category_id: int,
 ):
     category = await category_service.update_category(category_id, body)

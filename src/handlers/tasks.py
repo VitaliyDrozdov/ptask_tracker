@@ -8,7 +8,7 @@ from src.schemas import TaskCreate, TaskResponse
 router = APIRouter(prefix="/tasks", tags=["MyTasks"])
 
 
-@router.get("/all", response_model=list[TaskResponse])
+@router.get("/all")
 async def get_all_tasks(
     task_service: Annotated[TaskService, Depends(get_task_service)],
 ):
@@ -30,7 +30,7 @@ async def task_create(
             detail=f"Category {body.category_ids} not found.",
         )
 
-    return {"transaction": "succesfull", "task_id": task.id}
+    return task
 
 
 @router.patch("/{task_id}", response_model=TaskResponse)

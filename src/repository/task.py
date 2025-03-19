@@ -1,10 +1,12 @@
 from typing import List, Optional
 
 from sqlalchemy import delete, select, update
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from src.models import Categories, Tasks
-from src.schemas import TaskCreate
+from src.schemas import TaskCreate, TaskResponse
 
 
 class TaskRepository:
@@ -17,36 +19,70 @@ class TaskRepository:
         return task
 
     async def get_all_tasks(self, category_ids: Optional[List[int]] = None):
+        # if not category_ids:
+        #     res = await self.db_session.execute(select(Tasks)).options(
+        #         selectinload(Tasks.categories)
+        #     )
+        # else:
+        #     res = await self.db_session.execute(
+        #         select(Tasks)
+        #         .where(Tasks.categories.any(Categories.id.in_(category_ids)))
+        #         .options(selectinload(Tasks.categories))
+        #     )
         if not category_ids:
-            res = await self.db_session.execute(select(Tasks))
-        else:
-            res = await self.db_session.execute(
-                select(Tasks).where(Tasks.categories.in_(category_ids))
+            res = await self.db_session.scalars(
+                select(Tasks).options(selectinload(Tasks.categories))
             )
-        tasks = res.scalars().all()
+        else:
+            res = await self.db_session.scalars(
+                select(Tasks)
+                .where(Tasks.categories.any(Categories.id.in_(category_ids)))
+                .options(selectinload(Tasks.categories))
+            )
+        tasks = res.all()
+
         return tasks
 
     async def create_task(self, task_create: TaskCreate):
-        category_ids = (
-            task_create.category_ids
-            if isinstance(task_create.category_ids, list)
-            else [task_create.category_ids]
-        )
-        categories = await self.db_session.execute(
+        # category_ids = [category.id for category in task_create.category_ids]
+        category_ids = task_create.category_ids
+
+        # categories = await self.db_session.execute(
+        #     select(Categories).where(Categories.id.in_(category_ids))
+        # )
+        categories = await self.db_session.scalars(
             select(Categories).where(Categories.id.in_(category_ids))
         )
-        categories = categories.scalars().all()
+        categories = categories.all()
+        # categories = categories.scalars().all()
         if not categories:
-            return
-        task = Tasks(
+            return None
+
+        new_task = Tasks(
             name=task_create.name,
             p_count=task_create.p_count,
-            categories=categories,
         )
-        self.db_session.add(task)
-        await self.db_session.flush()
-        await self.db_session.commit()
-        return task
+        new_task.categories = categories
+        # task = await self.db_session.execute(
+        #     insert(Tasks).values(
+        #         name=task_create.name,
+        #         p_count=task_create.p_count,
+        #         categories=categories,
+        #     )
+        # )
+        try:
+            self.db_session.add(new_task)
+            await self.db_session.flush()
+            await self.db_session.commit()
+        except SQLAlchemyError:
+            await self.db_session.rollback()
+            return
+        return TaskResponse(
+            id=new_task.id,
+            name=new_task.name,
+            p_count=new_task.p_count,
+            category_ids=category_ids,
+        )
 
     async def delete_task(self, task_id: int):
         async with self.db_session as session:

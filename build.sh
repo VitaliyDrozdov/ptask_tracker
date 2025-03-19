@@ -7,7 +7,7 @@ APP_ENV=${APP_ENV:-"dev"}
 
 run() {
     echo "Running application in $APP_ENV mode on $HOST:$PORT..."
-    ENV_FILE="$APP_ENV.env"
+    ENV_FILE=".env.$APP_ENV"
     if [[ -f "$ENV_FILE" ]]; then
         echo "Loading environment variables from $ENV_FILE"
         export $(grep -v '^#' "$ENV_FILE" | xargs)
