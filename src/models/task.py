@@ -13,7 +13,7 @@ tasks_categories = Table(
 
 class Tasks(Base):
     __tablename__ = "tasks"
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
     name: Mapped[str] = mapped_column(String(50))
     p_count: Mapped[int] = mapped_column(Integer)
     # category_id: Mapped[int] = mapped_column(
@@ -21,6 +21,9 @@ class Tasks(Base):
     # )
     categories: Mapped[list["Categories"]] = relationship(
         "Categories", back_populates="tasks", secondary=tasks_categories
+    )
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("UserProfile.id"), nullable=False
     )
 
 

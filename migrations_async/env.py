@@ -7,7 +7,8 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from src.models import task  # noqa
-from src.settings import Base, DBConfig
+from src.models import user  # noqa
+from src.settings import Base, DBConfig, settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -29,6 +30,11 @@ if DBConfig.DATABASE_URL.startswith("sqlite"):
     )
 else:
     config.set_main_option("sqlalchemy.url", DBConfig.DATABASE_URL)
+
+# if settings.app_env == "dev":
+#     config.set_section_option("alembic", "script_location", "migrations")
+# else:
+#     config.set_section_option("alembic", "script_location", "migrations_async")
 target_metadata = Base.metadata
 
 
