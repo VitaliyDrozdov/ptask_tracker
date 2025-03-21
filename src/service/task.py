@@ -29,13 +29,10 @@ class TaskService:
 
     async def create_task(self, body: TaskCreate) -> TaskResponse:
         task_response = await self.task_repository.create_task(body)
-        # task = await self.task_repository.get_task(task_id)
         return task_response
 
     async def update_task_name(self, task_id: int, name: str) -> TaskResponse:
         task = await self.task_repository.update_task_name(task_id, name)
-        # if not task:
-        #     raise
         return TaskResponse.model_validate(task)
 
     async def delete_task(self, task_id: int) -> None:

@@ -24,7 +24,7 @@ repos:
     - id: isort
       args:
       - --skip
-      - "migrations*/.*"
+      - "migrations*/*, *__init__.py, *auth.py"
 
 - repo: https://github.com/PyCQA/flake8
   rev: 7.1.2
