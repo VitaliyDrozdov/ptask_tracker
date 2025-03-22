@@ -46,12 +46,19 @@ async def get_category_service(
     return CategoryService(category_repository)
 
 
+async def get_user_repository(
+    db_session: AsyncSession = Depends(get_db_session),
+) -> UserRepository:
+    return UserRepository(db_session=db_session)
+
+
 async def get_auth_service(user_repository: UserRepository) -> AuthService:
     return AuthService(user_repository=user_repository, settings=settings)
 
 
 async def get_user_service(
-    user_repository: UserRepository, auth_service=Depends(get_auth_service)
+    user_repository: UserRepository = Depends(get_task_repository),
+    auth_service=Depends(get_auth_service),
 ) -> UserService:
     return UserService(
         user_repository=user_repository, auth_service=auth_service

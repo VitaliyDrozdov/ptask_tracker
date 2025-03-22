@@ -11,12 +11,12 @@ from src.schemas import UserCreateSchema
 class UserRepository:
     db_session: AsyncSession
 
-    async def get_user_by_email(self, email: str) -> UserProfile | None:
-        qury = select(UserProfile).where(UserProfile.email == email)
+    async def get_user_by_email(self, email: str):
+        query = select(UserProfile).where(UserProfile.email == email)
         async with self.db_session as session:
-            return await session.execute(qury).scalar_one_or_none()
+            return (await session.execute(query)).scalar_one_or_none()
 
-    async def create_user(self, user_create: UserCreateSchema) -> UserProfile:
+    async def create_user(self, user_create: UserCreateSchema):
         query = (
             insert(UserProfile)
             .values(**user_create.model_dump(exclude_none=True))
@@ -28,12 +28,12 @@ class UserRepository:
             await session.commit()
             return await self.get_user(user_id)
 
-    async def get_user(self, user_id: int) -> UserProfile | None:
+    async def get_user(self, user_id: int):
         query = select(UserProfile).where(UserProfile.id == user_id)
         async with self.db_session as session:
-            return await session.execute(query).scalar_one_or_none()
+            return (await session.execute(query)).scalar_one_or_none()
 
-    async def get_user_by_username(self, username: str) -> UserProfile | None:
+    async def get_user_by_username(self, username: str):
         query = select(UserProfile).where(UserProfile.username == username)
         async with self.db_session as session:
-            return await session.execute(query).scalar_one_or_none()
+            return (await session.execute(query)).scalar_one_or_none()
