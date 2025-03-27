@@ -1,6 +1,7 @@
 from typing import Annotated
 
 # isort: skip file
+import httpx
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -9,6 +10,7 @@ from src.dependencies.db import get_db_session  # noqa
 from src.repository import TaskCacheRepository  # noqa
 from src.repository import CategoryRepository, TaskRepository, UserRepository
 from src.service import AuthService, CategoryService, TaskService, UserService
+from src.service.auth import GoogleClient, YandexClient
 from src.settings import settings
 
 
@@ -52,8 +54,33 @@ async def get_user_repository(
     return UserRepository(db_session=db_session)
 
 
-async def get_auth_service(user_repository: UserRepository) -> AuthService:
-    return AuthService(user_repository=user_repository, settings=settings)
+async def get_async_client() -> httpx.AsyncClient:
+    return httpx.AsyncClient()
+
+
+async def get_google_client(
+    async_client: httpx.AsyncClient = Depends(get_async_client),
+) -> GoogleClient:
+    return GoogleClient(settings=settings, async_client=async_client)
+
+
+async def get_yandex_client(
+    async_client: httpx.AsyncClient = Depends(get_async_client),
+) -> YandexClient:
+    return YandexClient(settings=settings, async_client=async_client)
+
+
+async def get_auth_service(
+    user_repository: UserRepository = Depends(get_user_repository),
+    google_client: GoogleClient = Depends(get_google_client),
+    yandex_client: YandexClient = Depends(get_yandex_client),
+) -> AuthService:
+    return AuthService(
+        user_repository=user_repository,
+        settings=settings,
+        google_client=google_client,
+        yandex_client=yandex_client,
+    )
 
 
 async def get_user_service(
