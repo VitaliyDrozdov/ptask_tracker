@@ -5,12 +5,15 @@ import httpx
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.broker.consumer import BrokerConsumer
+from src.broker.producer import BrokerProducer
 from src.dependencies.cache import get_cache_session
 from src.dependencies.db import get_db_session  # noqa
 from src.repository import TaskCacheRepository  # noqa
 from src.repository import CategoryRepository, TaskRepository, UserRepository
 from src.service import AuthService, CategoryService, TaskService, UserService
 from src.service.auth import GoogleClient, YandexClient
+from src.service.client.mail import MailClient
 from src.settings import settings
 
 
@@ -70,6 +73,29 @@ async def get_yandex_client(
     return YandexClient(settings=settings, async_client=async_client)
 
 
+async def get_user_service(
+    user_repository: UserRepository = Depends(get_task_repository),
+    auth_service=Depends(get_auth_service),
+) -> UserService:
+    return UserService(
+        user_repository=user_repository, auth_service=auth_service
+    )
+
+
+async def get_broker_producer() -> BrokerProducer:
+    return BrokerProducer()
+
+
+async def get_broker_consumer() -> BrokerConsumer:
+    return BrokerConsumer()
+
+
+async def get_mail_client(
+    broker_producer: BrokerProducer = Depends(get_broker_producer),
+) -> MailClient:
+    return MailClient(broker_producer=broker_producer)
+
+
 async def get_auth_service(
     user_repository: UserRepository = Depends(get_user_repository),
     google_client: GoogleClient = Depends(get_google_client),
@@ -80,13 +106,4 @@ async def get_auth_service(
         settings=settings,
         google_client=google_client,
         yandex_client=yandex_client,
-    )
-
-
-async def get_user_service(
-    user_repository: UserRepository = Depends(get_task_repository),
-    auth_service=Depends(get_auth_service),
-) -> UserService:
-    return UserService(
-        user_repository=user_repository, auth_service=auth_service
     )

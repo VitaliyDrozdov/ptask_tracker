@@ -23,13 +23,16 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=f".env.{os.getenv('APP_ENV', 'dev')}", case_sensitive=False
     )
-    CACHE_HOST: str = "localhost"
-    CACHE_PORT: int = 6379
-    CACHE_DB: int = 0
+    CACHE_URL: str
+    CELERY_BROKER_URL: str
+    CELERY_BACKEND_URL: str
+    AMQP_BROKER_URL: str
+
     GOOGLE_CLIENT_ID: str = ""
     GOOGLE_SECRET_KEY: str = ""
     GOOGLE_REDIRECT_URI: str = ""
     GOOGLE_TOKEN_URL: str = "https://accounts.google.com/o/oauth2/token"
+
     YANDEX_CLIENT_ID: str = ""
     YANDEX_SECRET_KEY: str = ""
     YANDEX_REDIRECT_URI: str = ""

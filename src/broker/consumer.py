@@ -2,10 +2,12 @@ from dataclasses import dataclass
 
 import aio_pika
 
+from src.settings.settings_all import settings
+
 
 @dataclass
 class BrokerConsumer:
-    amqp_url: str
+    amqp_url: str = settings.AMQP_BROKER_URL
     queue_name: str = "email_queue"
 
     async def open_connection(self) -> None:

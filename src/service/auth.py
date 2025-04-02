@@ -9,6 +9,7 @@ from src.models import UserProfile
 from src.repository import UserRepository
 from src.schemas import UserCreateSchema, UserLoginSchema
 from src.service.client import GoogleClient, YandexClient
+from src.service.client.mail import MailClient
 from src.settings.settings_all import settings as settings_
 
 from src.exceptions.exceptions import (  # isort: skip
@@ -24,6 +25,7 @@ class AuthService:
     settings: settings_
     google_client: GoogleClient
     yandex_client: YandexClient
+    mail_client: MailClient
 
     async def google_auth(self, code: str):
         user_data = await self.google_client.get_user_info(code)
@@ -37,6 +39,7 @@ class AuthService:
         )
         created_user = await self.user_repository.create_user(create_user_data)
         access_token = self.generate_access_token(user_id=created_user.id)
+        await self.mail_client.send_welcome_email(to=user_data.email)
         return UserLoginSchema(
             user_id=created_user.id, access_token=access_token
         )
@@ -57,6 +60,7 @@ class AuthService:
         )
         created_user = await self.user_repository.create_user(create_user_data)
         access_token = self.generate_access_token(user_id=created_user.id)
+        await self.mail_client.send_welcome_email(to=user_data.default_email)
         return UserLoginSchema(
             user_id=created_user.id, access_token=access_token
         )
